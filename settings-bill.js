@@ -1,3 +1,5 @@
+var moment = require('moment'); // require
+moment().format();
 module.exports = function SettingsBill() {
     let smsCost;
     let callCost;
@@ -28,8 +30,7 @@ module.exports = function SettingsBill() {
         if (hasReachedCriticalLevel()) {
             return;
         }
-
-
+        
         if (action === 'sms') {
             cost = smsCost;
         }
@@ -39,7 +40,9 @@ module.exports = function SettingsBill() {
         actionList.push({
             type: action,
             cost,
-            timestamp: new Date()
+            timestamp: moment().startOf('ss').fromNow()     // 19 minutes ago
+
+
         });
     }
 
@@ -92,7 +95,7 @@ module.exports = function SettingsBill() {
         if (criticalLevel && warningLevel) {
             if (hasReachedWarningLevel()) {
                 return "warning"
-            } else if (hasReachedCriticalLevel) {
+            } else if (hasReachedCriticalLevel()) {
                 return "critical"
             }
         }
@@ -107,7 +110,11 @@ module.exports = function SettingsBill() {
         actionsFor,
         totals,
         hasReachedWarningLevel,
-        color
+        color,
+        grandTotal,
+        getTotal,
+        hasReachedCriticalLevel,
+        //moment
     }
 }
 
