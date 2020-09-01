@@ -1,5 +1,4 @@
-var moment = require('moment'); // require
-moment().format();
+
 module.exports = function SettingsBill() {
     let smsCost;
     let callCost;
@@ -26,11 +25,13 @@ module.exports = function SettingsBill() {
 
     function recordAction(action) {
         let cost = 0;
-
+if(!action){
+    return;
+}
         if (hasReachedCriticalLevel()) {
             return;
         }
-        
+
         if (action === 'sms') {
             cost = smsCost;
         }
@@ -40,7 +41,7 @@ module.exports = function SettingsBill() {
         actionList.push({
             type: action,
             cost,
-            timestamp: moment().startOf('ss').fromNow()     // 19 minutes ago
+            timestamp: new Date()// 19 minutes ago
 
 
         });
@@ -70,9 +71,9 @@ module.exports = function SettingsBill() {
         let callTotal = getTotal('call')
 
         return {
-            smsTotal,
-            callTotal,
-            grandTotal: grandTotal()
+            smsTotal : smsTotal.toFixed(2),
+            callTotal : callTotal.toFixed(2),
+            grandTotal: grandTotal().toFixed(2)
         }
     }
 

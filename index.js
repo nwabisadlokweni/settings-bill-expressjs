@@ -2,11 +2,14 @@ const express = require('express');
 const exphbs = require('express-handlebars');
 const bodyParser = require('body-parser');
 const SettingsBill = require('./settings-bill');
+var moment = require('moment'); // require
+
 
 const app = express();
-const settingsBill = SettingsBill();
+const settingsBill = SettingsBill(); //instant
 
-app.engine('handlebars', exphbs({layoutsDir: './views/layouts' }));
+
+app.engine('handlebars', exphbs({ layoutsDir: './views/layouts' }));
 app.set('view engine', 'handlebars');
 
 app.use(express.static('public'));
@@ -14,11 +17,12 @@ app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
-app.get('/', function (req, res) {
+app.get('/', function (req, res) { // index route
     res.render('index', {
         settings: settingsBill.getSettings(),
         totals: settingsBill.totals(),
-        totalStyle : settingsBill.color()
+        totalStyle: settingsBill.color()
+        
     });
 });
 
@@ -39,12 +43,23 @@ app.post('/action', function (req, res) {
 });
 
 app.get('/actions', function (req, res) {
-    res.render('actions', { actions: settingsBill.actions() });
+    const actions = settingsBill.actions();
+    for (action of actions) {
+        action.stringDate = moment(action.timestamp).fromNow();
+    }
+   // console.log(actions);
+    res.render('actions', { actions });
 });
 
 app.get('/actions/:actionType', function (req, res) {
     const actionType = req.params.actionType;
-    res.render('actions', { actions: settingsBill.actionsFor(actionType) });
+
+    const actions = settingsBill.actionsFor(actionType);
+    for (action of actions) {
+        action.stringDate = moment(action.timestamp).fromNow();
+        
+    }
+    res.render('actions', { actions });
 });
 
 const PORT = process.env.PORT || 3011;
